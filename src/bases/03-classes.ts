@@ -17,10 +17,11 @@
 //  userClass.saludar();
 
 export class Usuario {
-    constructor(public nombre:string, public edad:number) {} 
+    constructor(public readonly nombre:string, public readonly edad:number, public readonly telefono?:string) {} 
     saludar():string {
         return `hola, soy ${this.nombre}`;
     }
  }
     //crear un objeto tipo usuario
-    export const userClass = new Usuario("javier", 40);
+    export const userClass = new Usuario("javier", 36, "123456789");
+    
