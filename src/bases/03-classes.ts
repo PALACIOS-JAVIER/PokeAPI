@@ -40,13 +40,13 @@ export interface PokemonSimplified {
 }
 
 export class PokemonService {
-    // Método para obtener un solo Pokémon con destructuring
+    // Método para obtener un solo Pokémon 
     async getPokemonData(idOrName: string | number): Promise<PokemonSimplified> {
         try {
             const { data } = await axios.get<PokeapiResponse>(`https://pokeapi.co/api/v2/pokemon/${idOrName}`);
             
             // Aplicando destructuring a la respuesta
-            const { id, name, sprites } = data as any; 
+            const { id, name, sprites } = data as any;// sprites sirve para optimizar rendimiento
             
             return {
                 id,
