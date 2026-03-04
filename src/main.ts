@@ -1,40 +1,55 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
-import { name } from './bases/01-types.ts'
-import { user  } from './bases/02-objetosInterfaces.ts'
-import { userClass } from './bases/03-classes.ts'
+import './style.css';
+import { pokemonService} from './bases/03-classes';
+import type { PokemonCardData } from './bases/03-classes';
 
-async function loadData(){
-  const dataRM = await userClass.getMoves();  
+const app = document.querySelector<HTMLDivElement>('#app')!;
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    
-    <h1>Vite + TypeScript</h1>
-    <h2>${name}</h2>
-    <h2> ${user[1].nombre} : ${user[1].edad}</h2>
-    <h2>Nombre ${userClass.nombre} <br> Edad: ${userClass.edad} </h2>
-      <h2>${userClass.getMoves()}</h2>
-    <h1>Objeto usado de rick y morty</h1>
-    <p>Este es el capitulo ${dataRM.id} y ese capitulo se llama <b> ${dataRM.name} </b> </p>
-    <img src="${dataRM.image}">>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
+async function renderApp() {
+    const pokemons = await pokemonService.getInitialList(12); // Lista inicial
 
-  </div>
-`}
-loadData();
+    app.innerHTML = `
+        <h1>Busca Tu Pokemon</h1>
+        <input type="text" id="buscador" placeholder="Busca para descubrir..." autocomplete="off">
+        <div id="pokemon-container" class="grid-layout">
+            ${pokemons.map(p => drawCard(p)).join('')}
+        </div>
+    `;
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+    initSearchLogic();
+}
+
+// Función de presentación pura
+function drawCard({ nombre, imagen, descripcion, id }: PokemonCardData) {
+    return `
+        <div class="pokemon-card" data-nombre="${nombre}">
+            <img src="${imagen}" alt="${nombre}">
+            <div class="info">
+                <p class="number">#${id}</p>
+                <p class="name">${nombre.toUpperCase()}</p>
+                <p class="desc">${descripcion}</p>
+            </div>
+        </div>
+    `;
+}
+
+// Lógica del concepto "Descubierto"
+function initSearchLogic() {
+    const input = document.querySelector<HTMLInputElement>('#buscador')!;
+    const cards = document.querySelectorAll<HTMLDivElement>('.pokemon-card');
+
+    input.addEventListener('input', (e) => {
+        const busqueda = (e.target as HTMLInputElement).value.toLowerCase();
+
+        cards.forEach(card => {
+            const pokeNombre = card.dataset.nombre || "";
+            // Si el usuario escribe el nombre, se activa el estilo "descubierto"
+            if (busqueda !== "" && pokeNombre.includes(busqueda)) {
+                card.classList.add('descubierto');
+            } else {
+                card.classList.remove('descubierto');
+            }
+        });
+    });
+}
+
+renderApp();
