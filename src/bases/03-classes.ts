@@ -31,37 +31,42 @@
 //     export const userClass = new Usuario("javier", 36, "123456789");
  
 import axios from 'axios';
-import type { PokeapiResponse } from './bases/PokenApi.ts';
+import type { PokeapiResponse } from './bases/PokenApi'; //
 
-// Definimos qué datos queremos extraer de pokenApi
-export type PokemonData = {
+export interface PokemonSimplified {
+    id: number;
     nombre: string;
-    experiencia: number;
-    habilidadPrincipal: string;
+    imagen: string;
 }
 
-export class Usuario {
-    constructor(
-        public id: number,
-        public nombre: string, 
-        public edad: number
-    ) {} 
-    async getPokemonInfo(): Promise<PokemonData> {
+export class PokemonService {
+    // Método para obtener un solo Pokémon con destructuring
+    async getPokemonData(idOrName: string | number): Promise<PokemonSimplified> {
         try {
-            // Usamos la URL de la imagen: pokeapi
-            const { data } = await axios.get<PokeapiResponse>(`https://pokeapi.co/api/v2/pokemon/ditto`);
-
-            // Extraemos la información relevante del JSON de la imagen
+            const { data } = await axios.get<PokeapiResponse>(`https://pokeapi.co/api/v2/pokemon/${idOrName}`);
+            
+            // Aplicando destructuring a la respuesta
+            const { id, name, sprites } = data as any; 
+            
             return {
-                nombre: data.name,
-                experiencia: data.base_experience,
-                habilidadPrincipal: data.abilities[0].ability.name
+                id,
+                nombre: name,
+                imagen: sprites.front_default 
             };
         } catch (error) {
-            console.error("Error al obtener datos de Pokémon:", error);
+            console.error("Error al obtener Pokémon:", error);
             throw error;
         }
     }
+
+    // Lógica para obtener el listado inicial
+    async getPokemonList(limit: number = 20): Promise<PokemonSimplified[]> {
+        const pokemonPromises = [];
+        for (let i = 1; i <= limit; i++) {
+            pokemonPromises.push(this.getPokemonData(i));
+        }
+        return Promise.all(pokemonPromises);
+    }
 }
 
-export const userClass = new Usuario(1, "javier", 36);
+export const pokemonService = new PokemonService();
