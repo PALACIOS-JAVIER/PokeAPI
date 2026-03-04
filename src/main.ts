@@ -5,10 +5,10 @@ import type { PokemonCardData } from './bases/03-classes';
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
 async function renderApp() {
-    const pokemons = await pokemonService.getInitialList(12); // Lista inicial
+    const pokemons = await pokemonService.getInitialList(20); // Lista inicial
 
     app.innerHTML = `
-        <h1>Busca Tu Pokemon</h1>
+        <h1>Busca Tu Pokemon  </h1>
         <input type="text" id="buscador" placeholder="Busca para descubrir..." autocomplete="off">
         <div id="pokemon-container" class="grid-layout">
             ${pokemons.map(p => drawCard(p)).join('')}
