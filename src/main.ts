@@ -17,6 +17,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <a href="https://www.typescriptlang.org/" target="_blank">
       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
     </a>
+    
     <h1>Vite + TypeScript</h1>
     <h2>${name}</h2>
     <h2> ${user[1].nombre} : ${user[1].edad}</h2>
